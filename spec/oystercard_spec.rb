@@ -10,11 +10,8 @@ describe Oystercard do
   end
 
   describe '#top_up' do
-    it 'adds funds to card' do
-      amount = rand(100)
-      oystercard.top_up(amount)
-      oystercard.top_up(amount)
-      expect(oystercard.balance).to eq amount * 2
+    it 'can top up the balance' do
+      expect { oystercard.top_up 1 }.to change { oystercard.balance }.by 1
     end
   end
 end
