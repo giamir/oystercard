@@ -4,4 +4,6 @@ require_relative '../lib/oystercard.rb'
 # As a customer
 # I want money on my card
 card = Oystercard.new
-card.balance
+p card.balance
+p card.top_up(10)
+p card.balance
