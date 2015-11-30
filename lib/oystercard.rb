@@ -8,13 +8,23 @@ class Oystercard
   end
 
   def top_up(amount)
-    fail "cannot top up, card limit of #{MAX_LIMIT} has been exceeded" if exceed_limit?(amount)
+    msg = "cannot top up, card limit of #{MAX_LIMIT} has been exceeded"
+    fail msg if exceed_limit?(amount)
     @balance += amount
+  end
+
+  def deduct(amount)
+    fail 'cannot deduct, not enough credit' if amount_more_than_balance?(amount)
+    @balance -= amount
   end
 
   private
 
   def exceed_limit?(amount)
     balance + amount > MAX_LIMIT
+  end
+
+  def amount_more_than_balance?(amount)
+    amount > balance
   end
 end
