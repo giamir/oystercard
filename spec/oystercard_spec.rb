@@ -19,4 +19,11 @@ describe Oystercard do
       expect { oystercard.top_up 1}.to raise_error "exceeded max balance of #{max}"
     end
   end
+
+  describe '#deduct' do
+    it 'deducts money from balance' do
+      oystercard.top_up 1
+      expect { oystercard.deduct 1}.to change { oystercard.balance}.by -1
+    end
+  end
 end
