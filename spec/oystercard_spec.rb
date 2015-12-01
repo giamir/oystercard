@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
+  let(:station) { double(:station) }
 
   describe '#balance' do
     it 'shows the card balance' do
@@ -22,29 +23,35 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    it 'change the status of in_journey to true' do
-      oystercard.top_up described_class::MIN_FARE
-      oystercard.touch_in
-      expect(oystercard).to be_in_journey
-    end
     it 'prevents touch in when card has insufficient funds' do
       msg = 'insufficient funds'
-      expect { oystercard.touch_in }.to raise_error msg
+      expect { oystercard.touch_in(station) }.to raise_error msg
+    end
+    it 'ensures card remembers the entry station when you touch in' do
+      oystercard.top_up described_class::MIN_FARE
+      oystercard.touch_in(station)
+      expect(oystercard.entry_station).to eq station
     end
   end
 
   describe '#touch_out' do
-    it 'change the status of in_journey to false' do
+    before do
       oystercard.top_up described_class::MIN_FARE
-      oystercard.touch_in
-      oystercard.touch_out
-      expect(oystercard).to_not be_in_journey
+      oystercard.touch_in(station)
     end
     it 'deduct the balance by minimum fare' do
       min = described_class::MIN_FARE
-      oystercard.top_up min
-      oystercard.touch_in
       expect { oystercard.touch_out }.to change { oystercard.balance }.by(-min)
+    end
+    it 'makes card forget entry station when you touch out' do
+      oystercard.touch_out
+      expect(oystercard.entry_station).to be_nil
+    end
+  end
+
+  describe '#in_journey?' do
+    it 'returns status of journey' do
+      expect(oystercard.in_journey?).to be false
     end
   end
 end
