@@ -22,6 +22,10 @@ class Oystercard
     @in_journey = true
   end
 
+  def touch_out
+    @in_journey = false
+  end
+
   private
 
   def exceed_limit?(amount)

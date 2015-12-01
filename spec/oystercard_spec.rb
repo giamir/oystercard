@@ -30,8 +30,17 @@ describe Oystercard do
 
   describe '#touch_in' do
     it 'change the status of in_journey to true' do
+      oystercard.top_up 10
       oystercard.touch_in
       expect(oystercard).to be_in_journey
+    end
+  end
+
+  describe '#touch_out' do
+    it 'change the status of in_journey to false' do
+      oystercard.touch_in
+      oystercard.touch_out
+      expect(oystercard).to_not be_in_journey
     end
   end
 end
