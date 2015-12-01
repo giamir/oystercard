@@ -6,10 +6,9 @@ describe Oystercard do
   let(:exit_station) { double(:exit_station) }
   let(:journey) { { entry_station: entry_station, exit_station: exit_station } }
 
-  describe '#initialize' do
-    it 'has an empty list of journeys by default' do
-      expect(oystercard.journeys).to be_empty
-    end
+
+  it 'has an empty list of journeys by default' do
+    expect(oystercard.journeys).to be_empty
   end
 
   describe '#balance' do

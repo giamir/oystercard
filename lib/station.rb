@@ -1,8 +1,14 @@
-class Station
-  attr_reader :name, :zone
+Station = Struct.new :name, :zone
 
-  def initialize(station)
-    @name = station[:name]
-    @zone = station[:zone]
-  end
-end
+# class Station
+#   attr_reader :name, :zone
+#
+#   def initialize(name, zone)
+#     self.name = name
+#     self.zone = zone
+#   end
+#
+#   private
+#
+#   attr_writer :name, :zone
+# end

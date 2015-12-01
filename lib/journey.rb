@@ -1,11 +1,26 @@
 class Journey
-  attr_reader :entry_station, :exit_station
+  attr_reader :entry_station, :exit_station, :complete
+  alias_method :complete?, :complete
 
-  def start(station)
-    @entry_station = station
+  PENALTY_FARE = 6
+
+  def initialize(entry_station = nil)
+    self.entry_station = entry_station
+    self.complete = false
   end
 
-  def end(station)
-    @exit_station = station
+  def exit(exit_station = nil)
+    self.exit_station = exit_station
+    self.complete = true
+    self
   end
+
+  def fare
+    return PENALTY_FARE unless exit_station
+    1
+  end
+
+  private
+
+  attr_writer :entry_station, :exit_station, :complete
 end
