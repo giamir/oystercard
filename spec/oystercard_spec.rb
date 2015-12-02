@@ -61,12 +61,6 @@ describe Oystercard do
     end
   end
 
-  describe '#in_journey?' do
-    it 'returns status of journey' do
-      expect(oystercard.in_journey?).to be false
-    end
-  end
-
   context 'after a journey' do
     it 'checks that touching in and out log the journey' do
       oystercard.top_up described_class::MIN_FARE
