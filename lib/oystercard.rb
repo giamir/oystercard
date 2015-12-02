@@ -19,28 +19,40 @@ class Oystercard
 
   def touch_in(station)
     fail 'insufficient funds' if insufficient_balance?
-    if !journeys.empty? && !journeys.last.complete?
-      journeys.last.exit
-      deduct(journeys.last.fare)
-    end
-    journeys << Journey.new(station)
+    handle_double_touch_in if double_touch_in?
+    add_journey station
   end
 
   def touch_out(station)
-    if journeys.empty? || journeys.last.complete?
-      journey = Journey.new
-      journey.exit station
-      deduct(journey.fare)
-      journeys << journey
-    else
-      journeys.last.exit station
-      deduct(journeys.last.fare)
-    end
+    add_journey if missing_touch_in?
+    complete_journey station
+    deduct(journeys.last.fare)
   end
 
   private
 
   attr_writer :balance, :journeys
+
+  def double_touch_in?
+    !journeys.empty? && !journeys.last.complete?
+  end
+
+  def handle_double_touch_in
+    journeys.last.exit
+    deduct(journeys.last.fare)
+  end
+
+  def add_journey(station = nil)
+    journeys << Journey.new(station)
+  end
+
+  def missing_touch_in?
+    journeys.empty? || journeys.last.complete?
+  end
+
+  def complete_journey(station)
+    journeys.last.exit station
+  end
 
   def deduct(amount)
     @balance -= amount

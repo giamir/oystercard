@@ -4,8 +4,7 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:entry_station) { double(:entry_station) }
   let(:exit_station) { double(:exit_station) }
-  let(:journey) { { entry_station: entry_station, exit_station: exit_station } }
-
+  let(:journey) { double(:journey) }
 
   it 'has an empty list of journeys by default' do
     expect(oystercard.journeys).to be_empty
@@ -34,39 +33,43 @@ describe Oystercard do
       msg = 'insufficient funds'
       expect { oystercard.touch_in(entry_station) }.to raise_error msg
     end
-    it 'ensures card remembers the entry_station when you touch in' do
+
+    it 'stores in journeys a starting journey' do
       oystercard.top_up described_class::MIN_FARE
-      oystercard.touch_in(entry_station)
-      expect(oystercard.entry_station).to eq entry_station
+      expect{oystercard.touch_in(entry_station)}.to change {oystercard.journeys.size}.by 1
     end
+
+    it 'deduct the penalty fare if you didnt touch out' do
+
+      oystercard.top_up(50)
+      oystercard.touch_in(entry_station)
+      oystercard.touch_in(entry_station)
+      expect(oystercard.balance).to eq 44
+    end
+
   end
 
   describe '#touch_out' do
-    before do
-      oystercard.top_up described_class::MIN_FARE
-      oystercard.touch_in(entry_station)
-    end
-    it { is_expected.to respond_to(:touch_out).with(1).argument }
-    it 'deduct the balance by minimum fare' do
-      min = described_class::MIN_FARE
-      expect { oystercard.touch_out(exit_station) }.to change { oystercard.balance }.by(-min)
-    end
-    it 'makes card forget entry_station when you touch out' do
+
+    it 'deduct the penalty fare if you touch out without touching in' do
       oystercard.touch_out(exit_station)
-      expect(oystercard.entry_station).to be_nil
+      expect(oystercard.balance).to eq(-6)
     end
-    it 'stores exit station' do
+
+    it 'completes last journey' do
       oystercard.touch_out(exit_station)
-      expect(oystercard.exit_station).to eq exit_station
+      expect(oystercard.journeys.last.complete).to be true
     end
   end
 
-  context 'after a journey' do
-    it 'checks that touching in and out log the journey' do
-      oystercard.top_up described_class::MIN_FARE
+  describe 'after a journey' do
+    it 'deducts minimum fare' do
+      oystercard.top_up(50)
       oystercard.touch_in(entry_station)
       oystercard.touch_out(exit_station)
-      expect(oystercard.journeys).to include journey
+      oystercard.touch_out(exit_station)
+      expect(oystercard.balance).to eq 43
     end
   end
+
 end
