@@ -19,7 +19,7 @@ class Oystercard
 
   def touch_in(station)
     fail 'insufficient funds' if insufficient_balance?
-    if journeys && !journeys.last.complete?
+    if !journeys.empty? && !journeys.last.complete?
       journeys.last.exit
       deduct(journeys.last.fare)
     end
@@ -27,7 +27,7 @@ class Oystercard
   end
 
   def touch_out(station)
-    if !journeys || journeys.last.complete?
+    if journeys.empty? || journeys.last.complete?
       journey = Journey.new
       journey.exit station
       deduct(journey.fare)
