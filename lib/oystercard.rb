@@ -52,7 +52,7 @@ class Oystercard
   end
 
   def complete_journey(station)
-    journeys.last.exit station
+    journeys.last.exit(station)
   end
 
   def deduct(amount)

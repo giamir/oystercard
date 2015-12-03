@@ -16,7 +16,6 @@ describe Journey do
   end
 
   context 'given an entry station' do
-    # subject { described_class.new(entry_station: station) }
     subject { described_class.new(station) }
 
     it 'has an entry station' do

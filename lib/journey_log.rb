@@ -1,13 +1,13 @@
 class JourneyLog
   attr_reader :journey_klass, :journeys
 
-  def initialize(journey_klass:)
+  def initialize(journey_klass)
     @journey_klass = journey_klass
     @journeys = []
   end
 
-  def start_journey(entry_station:)
-    journeys << (journey_klass.new entry_station)
+  def start_journey(station)
+    journeys << (journey_klass.new station)
   end
 
   # def incomplete_journey

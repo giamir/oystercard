@@ -2,8 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
-  let(:entry_station) { double(:entry_station) }
-  let(:exit_station) { double(:exit_station) }
+  let(:station) { double(:station) }
   let(:journey) { double(:journey) }
 
   it 'has an empty list of journeys by default' do
@@ -31,33 +30,31 @@ describe Oystercard do
   describe '#touch_in' do
     it 'prevents touch in when card has insufficient funds' do
       msg = 'insufficient funds'
-      expect { oystercard.touch_in(entry_station) }.to raise_error msg
+      expect { oystercard.touch_in(station) }.to raise_error msg
     end
 
     it 'stores in journeys a starting journey' do
       oystercard.top_up described_class::MIN_FARE
-      expect{oystercard.touch_in(entry_station)}.to change {oystercard.journeys.size}.by 1
+      expect { oystercard.touch_in(station) }
+        .to change { oystercard.journeys.size }.by 1
     end
 
     it 'deduct the penalty fare if you didnt touch out' do
-
-      oystercard.top_up(50)
-      oystercard.touch_in(entry_station)
-      oystercard.touch_in(entry_station)
-      expect(oystercard.balance).to eq 44
+      oystercard.top_up(10)
+      oystercard.touch_in(station)
+      expect { oystercard.touch_in(station) }
+        .to change { oystercard.balance }.by(-oystercard.journeys.last.fare)
     end
-
   end
 
   describe '#touch_out' do
-
     it 'deduct the penalty fare if you touch out without touching in' do
-      oystercard.touch_out(exit_station)
-      expect(oystercard.balance).to eq(-6)
+      oystercard.touch_out(station)
+      expect(oystercard.balance).to eq(-oystercard.journeys.last.fare)
     end
 
     it 'completes last journey' do
-      oystercard.touch_out(exit_station)
+      oystercard.touch_out(station)
       expect(oystercard.journeys.last.complete).to be true
     end
   end
@@ -65,11 +62,10 @@ describe Oystercard do
   describe 'after a journey' do
     it 'deducts minimum fare' do
       oystercard.top_up(50)
-      oystercard.touch_in(entry_station)
-      oystercard.touch_out(exit_station)
-      oystercard.touch_out(exit_station)
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      oystercard.touch_out(station)
       expect(oystercard.balance).to eq 43
     end
   end
-
 end
