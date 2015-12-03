@@ -27,7 +27,7 @@ class Oystercard
   def touch_out(station)
     add_journey if missing_touch_in?
     complete_journey station
-    deduct(journeys.last.fare)
+    deduct(appropriate_fare)
   end
 
   private
@@ -40,7 +40,7 @@ class Oystercard
 
   def handle_double_touch_in
     journeys.last.exit
-    deduct(journeys.last.fare)
+    deduct(appropriate_fare)
   end
 
   def add_journey(station = nil)
@@ -53,6 +53,10 @@ class Oystercard
 
   def complete_journey(station)
     journeys.last.exit(station)
+  end
+
+  def appropriate_fare
+    journeys.last.fare
   end
 
   def deduct(amount)

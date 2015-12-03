@@ -28,6 +28,10 @@ describe JourneyLog do
   end
 
   describe '#journeys' do
+    it 'has an empty list of journeys by default' do
+      expect(log.journeys).to be_empty
+    end
+
     xit 'should return a list of all previous journeys' do
       # log.start_journey(entry_station)
       # log.exit_journey(exit_station)

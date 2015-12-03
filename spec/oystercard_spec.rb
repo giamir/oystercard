@@ -4,7 +4,6 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:station) { double(:station) }
   let(:journey) { double(:journey) }
-
   it 'has an empty list of journeys by default' do
     expect(oystercard.journeys).to be_empty
   end
@@ -52,20 +51,14 @@ describe Oystercard do
       oystercard.touch_out(station)
       expect(oystercard.balance).to eq(-oystercard.journeys.last.fare)
     end
-
-    it 'completes last journey' do
-      oystercard.touch_out(station)
-      expect(oystercard.journeys.last.complete).to be true
-    end
   end
 
   describe 'after a journey' do
     it 'deducts minimum fare' do
-      oystercard.top_up(50)
+      oystercard.top_up(1)
       oystercard.touch_in(station)
       oystercard.touch_out(station)
-      oystercard.touch_out(station)
-      expect(oystercard.balance).to eq 43
+      expect(oystercard.balance).to eq 0
     end
   end
 end
