@@ -1,12 +1,10 @@
+require 'spec_helper'
 require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:station) { double(:station) }
   let(:journey) { double(:journey) }
-  it 'has an empty list of journeys by default' do
-    expect(oystercard.journeys).to be_empty
-  end
 
   describe '#balance' do
     it 'shows the card balance' do
@@ -32,24 +30,24 @@ describe Oystercard do
       expect { oystercard.touch_in(station) }.to raise_error msg
     end
 
-    it 'stores in journeys a starting journey' do
-      oystercard.top_up described_class::MIN_FARE
-      expect { oystercard.touch_in(station) }
-        .to change { oystercard.journeys.size }.by 1
+    it 'starts a new journey' do
+      expect(oystercard.log).to receive(:start_journey).with(station)
+      oystercard.top_up(10)
+      oystercard.touch_in(station)
     end
 
-    it 'deduct the penalty fare if you didnt touch out' do
+    it 'deduct outstanding_charges' do
       oystercard.top_up(10)
       oystercard.touch_in(station)
       expect { oystercard.touch_in(station) }
-        .to change { oystercard.balance }.by(-oystercard.journeys.last.fare)
+        .to change { oystercard.balance }.by(-Journey::PENALTY_FARE)
     end
   end
 
   describe '#touch_out' do
     it 'deduct the penalty fare if you touch out without touching in' do
-      oystercard.touch_out(station)
-      expect(oystercard.balance).to eq(-oystercard.journeys.last.fare)
+      expect { oystercard.touch_out(station) }
+        .to change { oystercard.balance }.by(-Journey::PENALTY_FARE)
     end
   end
 

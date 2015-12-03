@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'journey'
 
 describe Journey do
