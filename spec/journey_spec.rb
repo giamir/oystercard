@@ -34,14 +34,14 @@ describe Journey do
     end
 
     context 'given an exit station' do
-      let(:other_station) { double :other_station }
+      let(:other_station) { double :other_station, zone: 2 }
 
       before do
         subject.exit(other_station)
       end
 
       it 'calculates a fare' do
-        expect(subject.fare).to eq 1
+        expect(subject.fare).to eq 2
       end
 
       it 'knows if a journey is complete' do

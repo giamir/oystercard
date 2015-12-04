@@ -7,9 +7,10 @@ class Oystercard
 
   MAX_BALANCE = 90
   MIN_FARE = 1
+  INIT_BALANCE = 0
 
   def initialize(journey_log_klass: JourneyLog.new)
-    self.balance = 0
+    self.balance = INIT_BALANCE
     self.log = journey_log_klass
   end
 

@@ -3,8 +3,9 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
-  let(:station) { double(:station) }
-  let(:journey) { double(:journey) }
+  let(:station) { double :station, zone: 1 }
+  let(:journey) { double :journey }
+  let(:penalty_fare) { Journey::PENALTY_FARE }
 
   describe '#balance' do
     it 'shows the card balance' do
@@ -40,19 +41,19 @@ describe Oystercard do
       oystercard.top_up(10)
       oystercard.touch_in(station)
       expect { oystercard.touch_in(station) }
-        .to change { oystercard.balance }.by(-Journey::PENALTY_FARE)
+        .to change { oystercard.balance }.by(-penalty_fare)
     end
   end
 
   describe '#touch_out' do
     it 'deduct the penalty fare if you touch out without touching in' do
       expect { oystercard.touch_out(station) }
-        .to change { oystercard.balance }.by(-Journey::PENALTY_FARE)
+        .to change { oystercard.balance }.by(-penalty_fare)
     end
   end
 
   describe 'after a journey' do
-    it 'deducts minimum fare' do
+    it 'deducts appropriate fare' do
       oystercard.top_up(1)
       oystercard.touch_in(station)
       oystercard.touch_out(station)

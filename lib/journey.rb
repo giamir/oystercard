@@ -3,6 +3,7 @@ class Journey
   alias_method :complete?, :complete
 
   PENALTY_FARE = 6
+  MIN_FARE = 1
 
   def initialize(entry_station = nil)
     self.entry_station = entry_station
@@ -17,12 +18,16 @@ class Journey
 
   def fare
     return PENALTY_FARE if penalty?
-    1
+    zone_difference + MIN_FARE
   end
 
   private
 
   attr_writer :entry_station, :exit_station, :complete
+
+  def zone_difference
+    (entry_station.zone - exit_station.zone).abs
+  end
 
   def penalty?
     (!entry_station || !exit_station)
